@@ -11,8 +11,10 @@ Linux 启动动画适配版。启动 ChatGPT 桌面应用时，在应用窗口�
 - 视频保持 16:9，按窗口容纳显示，留黑边，不拉伸、不裁掉画面。
 - 从原有 ChatGPT 应用图标启动时触发。用户会话的启动监听也会检测直接运行 ChatGPT 程序的情况。
 - 同一次启动只播放一个动画；按 `Esc` 可以跳过。
+- 点击后立即启动客户端；动画结束后恢复被最小化的窗口并切到 ChatGPT 前台。
+- 动画缺失或解码失败不会阻止客户端启动。客户端错误保存到 `app-launch.log`，避免无提示地只留下桌宠。
 
-此目录对应 **v0.1.1 修复版**。旧 GitHub v0.1.0 压缩包不包含上述嵌入窗口和启动监听。
+此目录对应 **v0.1.2 修复版**。v0.1.0 只有基础播放器；v0.1.1 尚未实现动画结束后的客户端前台交接。
 
 ## Ubuntu / Debian 部署
 
@@ -28,7 +30,7 @@ sudo apt install python3 python3-gi gir1.2-gtk-3.0 gir1.2-gstreamer-1.0 \
 确认已安装 ChatGPT Linux 桌面应用，本机启动命令为 `/usr/bin/chatgpt`。然后解压本修复版并安装：
 
 ```bash
-tar -xzf dragon-codex-boot-linux-x86_64-v0.1.1.tar.gz
+tar -xzf dragon-codex-boot-linux-x86_64-v0.1.2.tar.gz
 cd DragonCodexBootLinux
 ./install-linux.sh
 ```
@@ -44,7 +46,7 @@ systemctl --user status dragon-codex-startup.service
 /usr/bin/python3 startup.py --preview
 ```
 
-运行状态保存在 `~/.cache/dragon-codex-boot/status.json`，包含窗口实际尺寸、视频画布尺寸、收到的视频帧数和 GTK 实际绘制次数。错误日志为同目录下的 `startup.log`。
+运行状态保存在 `~/.cache/dragon-codex-boot/status.json`，包含窗口实际尺寸、视频画布尺寸、收到的视频帧数和 GTK 实际绘制次数。`app_handoff=active` 表示已确认客户端窗口恢复并进入前台。动画错误日志为同目录下的 `startup.log`，客户端输出为 `app-launch.log`。
 
 应用窗口是 1280×820 时，动画窗口也是 1280×820；视频按比例放入其中。应用最大化时，动画跟随当前显示器内的应用窗口。
 
